@@ -63,13 +63,14 @@
 		        <div class="form-group">
 		            <strong>Image:</strong>
 		            <input type="file" name="image" value="{{ $blog->image }}" class="form-control" placeholder="image">
-		        </div>
+                    <img src="{{URL::asset('/images/')}}/{{$blog->image}}" style="height: 100px;">
+                </div>
 		    </div>
 		    <div class="col-xs-12 col-sm-12 col-md-12">
 		        <div class="form-group">
 		            <select name="status" id="status">
                         <option value="active">active</option>
-                        <option value="active">inactive</option>
+                        <option value="inactive">inactive</option>
                     </select>
 		        </div>
 		    </div>

@@ -8,12 +8,11 @@
             <div class="pull-left">
                 <h2>Blogs</h2>
             </div>
+            @if(Auth::user())
             <div class="float-right">
-
                 <a class="btn btn-success" href="{{ route('blog.create') }}"> Create New blog</a>
-
-
             </div>
+            @endif
         </div>
     </div>
 
@@ -38,25 +37,31 @@
             <th width="280px">Action</th>
         </tr>
 	    @foreach ($blog as $row)
-	    <tr>
-            <td>{{ $row->image }}</td>
-	        <td>{{ $row->title }}</td>
-	        <td>{{ $row->description }}</td>
-            <td>{{ $row->start_date }}</td>
-            <td>{{ $row->end_date }}</td>
-	        <td>
-                <form action="{{ route('blog.destroy',$row->id) }}" method="POST">
+            <tr>
+                <td>
+                    <img src="images/{{$row->image}}" alt="tatavasoft" width="100" height="100">
+                </td>
+                <td>{{ $row->title }}</td>
+                <td>{{ $row->description }}</td>
+                <td>{{ $row->start_date }}</td>
+                <td>{{ $row->end_date }}</td>
+                <td>
+                    @if(Auth::user())
+                    <form action="{{ route('blog.destroy',$row->id) }}" method="POST">
 
-                    <a class="btn btn-primary" href="{{ route('blog.edit',$row->id) }}">Edit</a>
+                        <a class="btn btn-primary" href="{{ route('blog.edit',$row->id) }}">Edit</a>
 
 
 
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-	        </td>
-	    </tr>
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                    @else
+                     ---
+                    @endif
+                </td>
+            </tr>
 	    @endforeach
     </table>
 

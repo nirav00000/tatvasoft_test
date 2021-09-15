@@ -68,7 +68,7 @@
 		        <div class="form-group">
 		            <select name="status" id="status">
                         <option value="active">active</option>
-                        <option value="active">inactive</option>
+                        <option value="inactive">inactive</option>
                     </select>
 		        </div>
 		    </div>

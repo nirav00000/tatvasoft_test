@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\blog;
 use Illuminate\Http\Request;
 use Auth;
+use Carbon\Carbon;
 
 class BlogController extends Controller
 {
@@ -17,16 +18,18 @@ class BlogController extends Controller
     {
         $role = Auth::user()->role;
         $id = Auth::user()->id;
-        if($role == 'Admin')
-        {
-            $blog = blog::all();
+        if ($role == 'Admin') {
+            $blog = blog::where('status', 'active')
+            ->whereDate('end_date', '>=', Carbon::today()->toDateString())
+            ->get();
         } else {
-            $blog = blog::where('id','=',$id)->get();
+            $blog = blog::where('status', 'active')
+            ->whereDate('end_date', '>=', Carbon::today()->toDateString())
+            ->where('user_id', '=', $id)
+            ->get();
         }
 
-
-
-        return view('blog.index',compact('blog'));
+        return view('blog.index', compact('blog'));
     }
 
     /**
@@ -37,7 +40,6 @@ class BlogController extends Controller
     public function create()
     {
         return view('blog.create');
-
     }
 
     /**
@@ -58,6 +60,13 @@ class BlogController extends Controller
 
         $data = $request->all();
         $data['user_id'] = Auth::user()->id;
+
+        if (isset($request->image)) {
+            $image = $request->image;
+            $imageName = time() . '.' . $image->extension();
+            $image->move(public_path('images'), $imageName);
+            $data['image'] = $imageName;
+        }
 
         blog::create($data);
         return redirect()->route('blog.index')->with('blog create successfully');
@@ -82,8 +91,7 @@ class BlogController extends Controller
      */
     public function edit(blog $blog)
     {
-        return view('blog.edit',compact('blog'));
-
+        return view('blog.edit', compact('blog'));
     }
 
     /**
@@ -100,21 +108,20 @@ class BlogController extends Controller
             'description' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
-            'image' => 'required',
+            'image' => 'sometimes|required',
         ]);
 
         $data = $request->all();
         $data['user_id'] = Auth::user()->id;
 
-
-        $blog->update($data);
-
-        if (isset($request->image))
-        {
+        if (isset($request->image)) {
             $image = $request->image;
             $imageName = time() . '.' . $image->extension();
             $image->move(public_path('images'), $imageName);
+            $data['image'] = $imageName;
         }
+
+        $blog->update($data);
 
         return redirect()->route('blog.index')->with('blog updated successfully');
     }
